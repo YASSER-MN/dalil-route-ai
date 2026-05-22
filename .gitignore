@@ -1,0 +1,40 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment & secrets
+.env
+
+# Data (large / generated)
+backend/data/raw/*.pdf
+backend/data/chroma_db/
+backend/data/bm25.pkl
+backend/data/eval_results_*.json
+
+# Frontend
+node_modules/
+.next/
+frontend/.next/
+frontend/out/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln

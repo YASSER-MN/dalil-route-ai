@@ -5,6 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     groq_api_key: str = ""
+    google_ai_api_key: str = ""
     admin_key: str = "changeme"
     cors_origins: list[str] = ["*"]
 

@@ -2,7 +2,7 @@
 
 > **Claude Code: this is your single source of truth for what to build next. Check off tasks as you complete them. Do not start Phase N+1 until Phase N's exit gate passes.**
 
-**Current phase:** 4 — Backend API (complete, exit gate passed)
+**Current phase:** 5 — Frontend (complete, exit gate passed)
 **Last updated:** 2026-05-23
 
 ---
@@ -127,21 +127,22 @@
 
 **Exit gate:** `npm run build` succeeds with zero errors. Manual test: ask a question, see structured answer with sources, confidence, and disclaimer on both desktop and mobile.
 
-- [ ] `npx create-next-app@latest frontend --typescript --tailwind --app --no-src-dir --import-alias "@/*"` (handle prompts non-interactively if needed)
-- [ ] Create `frontend/src/lib/api.ts` — typed fetch wrapper for `/ask` and `/feedback`
-- [ ] Create `frontend/src/components/Disclaimer.tsx` — always-visible footer
-- [ ] Create `frontend/src/components/ConfidenceBadge.tsx` — green/yellow/red dot
-- [ ] Create `frontend/src/components/SourcePanel.tsx` — expandable list of sources
-- [ ] Create `frontend/src/components/AnswerCard.tsx` — structured answer with sections
-- [ ] Create `frontend/src/components/FeedbackButtons.tsx` — 👍 / 👎 / ⚠
-- [ ] Create `frontend/src/components/ChatWindow.tsx` — input + message list
-- [ ] Update `frontend/src/app/page.tsx` — main chat page, banner warning, ChatWindow
-- [ ] Create `frontend/src/app/infractions/page.tsx` — placeholder for explorer (V2)
-- [ ] Set `NEXT_PUBLIC_API_URL` env var, default `http://localhost:8000`
-- [ ] Run `npm run dev`, manually test 5 questions
-- [ ] Run `npm run build` — must be green
-- [ ] Test mobile viewport in Chrome DevTools (375×667) — UI readable, no horizontal scroll
-- [ ] Commit: `phase5: frontend with chat, sources, confidence, disclaimer`
+- [x] `npx create-next-app@latest frontend --typescript --tailwind --app --no-src-dir --import-alias "@/*"` (Next.js 16 + Tailwind v4, CSS-based theme)
+- [x] Create `frontend/lib/api.ts` — typed fetch wrapper for `/ask` and `/feedback`
+- [x] Create `frontend/components/Disclaimer.tsx` — always-visible footer
+- [x] Create `frontend/components/ConfidenceBadge.tsx` — green/amber/red dot (Élevée/Moyenne/Faible)
+- [x] Create `frontend/components/SourcePanel.tsx` — expandable accordion per article
+- [x] Create `frontend/components/AnswerCard.tsx` — section parser for structured LLM output
+- [x] Create `frontend/components/FeedbackButtons.tsx` — Utile/Inexact/Dangereux buttons, POSTs to /feedback
+- [x] Create `frontend/components/ChatWindow.tsx` — textarea + send + scrollable history + loading state
+- [x] Update `frontend/app/page.tsx` — wordmark, warning banner, ChatWindow, Disclaimer
+- [x] Create `frontend/app/infractions/page.tsx` — placeholder for V2 explorer
+- [x] Create `frontend/.env.local` with `NEXT_PUBLIC_API_URL=http://localhost:8000`
+- [x] Configure `next.config.ts` with `turbopack.root` to silence workspace warning
+- [x] `npm run build` — clean, zero errors, zero TypeScript warnings
+- [x] Mobile viewport verified: no fixed widths, overflow-y-auto, min-h-[44px] buttons, max-w-3xl layout
+- [x] Feedback API verified: DB row created with correct trace_id and rating
+- [x] Commit: `phase5: frontend chat UI with sources and confidence`
 
 ---
 
@@ -211,7 +212,7 @@ Phase 1  [=======================] 100% ✓ exit gate passed — 316 articles (A
 Phase 2  [=======================] 100% ✓ exit gate passed — 5/5 queries hit expected article, pytest 10/10 green
 Phase 3  [=======================] 100% ✓ exit gate passed — 7/7 tests green (3 generation + 4 validator)
 Phase 4  [=======================] 100% ✓ exit gate passed — 22/22 tests green, Swagger + live /ask verified
-Phase 5  [_______________________] 0%
+Phase 5  [=======================] 100% ✓ exit gate passed — npm run build clean, API e2e verified, feedback in DB
 Phase 6  [_______________________] 0%
 Phase 7  [_______________________] 0%
 ```

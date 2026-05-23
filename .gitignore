@@ -20,6 +20,7 @@ backend/data/raw/*.pdf
 backend/data/chroma_db/
 backend/data/bm25.pkl
 backend/data/eval_results_*.json
+backend/data/traces.db
 
 # Frontend
 node_modules/

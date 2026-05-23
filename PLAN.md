@@ -2,7 +2,7 @@
 
 > **Claude Code: this is your single source of truth for what to build next. Check off tasks as you complete them. Do not start Phase N+1 until Phase N's exit gate passes.**
 
-**Current phase:** 3 — Generation + Validation (complete, exit gate passed)
+**Current phase:** 4 — Backend API (complete, exit gate passed)
 **Last updated:** 2026-05-23
 
 ---
@@ -99,27 +99,27 @@
 
 **Exit gate:** `pytest backend/tests/test_api.py` passes — POST /ask returns valid schema; rate limit triggers at 31st request; PII gets redacted.
 
-- [ ] Create `backend/app/security/pii.py`
-  - [ ] Regex patterns for: CIN, Moroccan phone, plate number
-  - [ ] `redact(text) -> tuple[str, list[str]]` returns cleaned text + list of redacted types
-- [ ] Create `backend/app/security/rate_limit.py` using `slowapi`
-  - [ ] Default: 30/hour per IP
-  - [ ] Decorator helper
-- [ ] Create `backend/app/db/models.py`
-  - [ ] SQLAlchemy models: `AnswerTrace` (id, question_hash, sources, answer, valid, created_at)
-  - [ ] `Feedback` (trace_id, rating, comment)
-- [ ] Create `backend/app/db/session.py` — SQLite via SQLAlchemy
-- [ ] Create `backend/app/config.py` — pydantic-settings loading from `.env`
-- [ ] Create `backend/app/api/ask.py`
-  - [ ] `POST /ask` body: `{question: str}`
-  - [ ] Pipeline: redact PII → retrieve → generate → validate → save trace → return
-  - [ ] Response: `{answer, sources, valid, confidence, trace_id, pii_redacted}`
-- [ ] Create `backend/app/api/feedback.py` — `POST /feedback` stores rating linked to trace_id
-- [ ] Create `backend/app/api/admin.py` — `GET /admin/traces` (paginated, requires admin key from env)
-- [ ] Create `backend/app/main.py` — FastAPI app, CORS middleware, register routers
-- [ ] Write `backend/tests/test_api.py` using `TestClient`
-- [ ] Run: `uvicorn app.main:app --reload` and manually test at `http://localhost:8000/docs`
-- [ ] Commit: `phase4: backend API with rate limit, PII redaction, traces`
+- [x] Create `backend/app/security/pii.py`
+  - [x] Regex patterns for: CIN, Moroccan phone, plate number
+  - [x] `redact(text) -> tuple[str, list[str]]` returns cleaned text + list of redacted types
+- [x] Create `backend/app/security/rate_limit.py` using `slowapi`
+  - [x] Default: 30/hour per IP
+  - [x] Decorator helper
+- [x] Create `backend/app/db/models.py`
+  - [x] SQLAlchemy models: `AnswerTrace` (id, question_hash, sources, answer, valid, created_at)
+  - [x] `Feedback` (trace_id, rating, comment)
+- [x] Create `backend/app/db/session.py` — SQLite via SQLAlchemy
+- [x] Create `backend/app/config.py` — pydantic-settings loading from `.env`
+- [x] Create `backend/app/api/ask.py`
+  - [x] `POST /ask` body: `{question: str}`
+  - [x] Pipeline: redact PII → retrieve → generate → validate → save trace → return
+  - [x] Response: `{answer, sources, valid, confidence, trace_id, pii_redacted}`
+- [x] Create `backend/app/api/feedback.py` — `POST /feedback` stores rating linked to trace_id
+- [x] Create `backend/app/api/admin.py` — `GET /admin/traces` (paginated, requires admin key from env)
+- [x] Create `backend/app/main.py` — FastAPI app, CORS middleware, register routers
+- [x] Write `backend/tests/test_api.py` using `TestClient`
+- [x] Run: `uvicorn backend.app.main:app --reload` — tested at `http://localhost:8000/docs`, all endpoints verified manually
+- [x] Commit: `phase4: backend API with rate limit, PII redaction, traces`
 
 ---
 
@@ -210,7 +210,7 @@ Phase 0  [=======================] 100% ✓ exit gate passed
 Phase 1  [=======================] 100% ✓ exit gate passed — 316 articles (Arabic), pytest 4/4 green
 Phase 2  [=======================] 100% ✓ exit gate passed — 5/5 queries hit expected article, pytest 10/10 green
 Phase 3  [=======================] 100% ✓ exit gate passed — 7/7 tests green (3 generation + 4 validator)
-Phase 4  [_______________________] 0%
+Phase 4  [=======================] 100% ✓ exit gate passed — 5/5 tests green, all endpoints verified
 Phase 5  [_______________________] 0%
 Phase 6  [_______________________] 0%
 Phase 7  [_______________________] 0%

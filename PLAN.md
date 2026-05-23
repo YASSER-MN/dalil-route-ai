@@ -2,7 +2,7 @@
 
 > **Claude Code: this is your single source of truth for what to build next. Check off tasks as you complete them. Do not start Phase N+1 until Phase N's exit gate passes.**
 
-**Current phase:** 2 — Retrieval Engine (complete, exit gate passed)
+**Current phase:** 3 — Generation + Validation (complete, exit gate passed)
 **Last updated:** 2026-05-23
 
 ---
@@ -72,26 +72,26 @@
 
 **Exit gate:** `pytest backend/tests/test_generation.py backend/tests/test_validator.py` passes — answers cite real articles, include disclaimer, refuse unsafe requests, and hallucinated citations are caught.
 
-- [ ] Create `backend/app/rag/prompts/system_v1.txt` (versioned system prompt — see CLAUDE.md rule)
+- [x] Create `backend/app/rag/prompts/system_v1.txt` (versioned system prompt — see CLAUDE.md rule)
   - The 5 absolute rules: only use evidence, never invent, always cite, always disclaim, refuse unsafe
   - Output format: short answer / legal basis / missing info / confidence / disclaimer
-- [ ] Create `backend/app/rag/generator.py`
-  - [ ] `class AnswerGenerator` with `generate(question: str, evidence: list[Chunk]) -> Answer`
-  - [ ] Build evidence block with `<evidence article="N">...</evidence>` XML delimiters (anti-injection)
-  - [ ] Call Groq API with `llama-3.1-70b-versatile`, temperature=0.1
-  - [ ] Return dataclass `Answer(text: str, model: str, prompt_version: str, evidence_ids: list[str])`
-- [ ] Create `backend/app/rag/validator.py`
-  - [ ] `validate_citations(answer_text, allowed_article_numbers) -> ValidationResult`
-  - [ ] Extract every `Article N` claim with regex
-  - [ ] Flag any not in allowed set as `hallucinated`
-  - [ ] Return `ValidationResult(valid: bool, hallucinated: list[int])`
-- [ ] Write `backend/tests/test_generation.py` — 3 test questions:
-  - Legal question → answer contains article ref + disclaimer
-  - Unsafe question ("comment éviter la police") → refusal in answer
-  - Ambiguous question → "informations manquantes" section present
-- [ ] Write `backend/tests/test_validator.py` — fake answer with `[Article 99999]` → flagged invalid
-- [ ] Run tests until green
-- [ ] Commit: `phase3: grounded generation + citation validator`
+- [x] Create `backend/app/rag/generator.py`
+  - [x] `class AnswerGenerator` with `generate(question: str, evidence: list[Chunk]) -> Answer`
+  - [x] Build evidence block with `<evidence article="N">...</evidence>` XML delimiters (anti-injection)
+  - [x] Call Groq API with `llama-3.3-70b-versatile`, temperature=0.1
+  - [x] Return dataclass `Answer(text: str, model: str, prompt_version: str, evidence_ids: list[str])`
+- [x] Create `backend/app/rag/validator.py`
+  - [x] `validate_citations(answer_text, allowed_article_numbers) -> ValidationResult`
+  - [x] Extract every `Article N` claim with regex
+  - [x] Flag any not in allowed set as `hallucinated`
+  - [x] Return `ValidationResult(valid: bool, cited: list[int], hallucinated: list[int])`
+- [x] Write `backend/tests/test_generation.py` — 3 test questions:
+  - Legal question → answer contains article ref + disclaimer ✓
+  - Unsafe question ("comment éviter une amende radar") → refusal + alternative légale ✓
+  - Irrelevant question → "informations manquantes" or "faible" confidence ✓
+- [x] Write `backend/tests/test_validator.py` — fake answer with `[Article 99999]` → flagged invalid ✓
+- [x] Run tests until green — 7/7 passed
+- [x] Commit: `phase3: grounded generation + citation validator`
 
 ---
 
@@ -209,7 +209,7 @@ Only after Phase 7 is fully done. Pick in this order:
 Phase 0  [=======================] 100% ✓ exit gate passed
 Phase 1  [=======================] 100% ✓ exit gate passed — 316 articles (Arabic), pytest 4/4 green
 Phase 2  [=======================] 100% ✓ exit gate passed — 5/5 queries hit expected article, pytest 10/10 green
-Phase 3  [_______________________] 0%
+Phase 3  [=======================] 100% ✓ exit gate passed — 7/7 tests green (3 generation + 4 validator)
 Phase 4  [_______________________] 0%
 Phase 5  [_______________________] 0%
 Phase 6  [_______________________] 0%

@@ -2,7 +2,7 @@
 
 > **Claude Code: this is your single source of truth for what to build next. Check off tasks as you complete them. Do not start Phase N+1 until Phase N's exit gate passes.**
 
-**Current phase:** 1 — Corpus Foundation (complete, exit gate passed)
+**Current phase:** 2 — Retrieval Engine (complete, exit gate passed)
 **Last updated:** 2026-05-23
 
 ---
@@ -45,26 +45,26 @@
 
 **Exit gate:** `pytest backend/tests/test_retrieval.py` passes — 5 hand-crafted queries return the expected article in top-5 at least 4/5 times.
 
-- [ ] Create `backend/scripts/build_index.py`
-  - [ ] Load articles from JSON
-  - [ ] Generate embeddings with `intfloat/multilingual-e5-small` (prefix passages with `"passage: "`)
-  - [ ] Persist embeddings to `data/chroma_db/` via ChromaDB
-  - [ ] Build BM25 index, pickle to `data/bm25.pkl`
-- [ ] Create `backend/app/rag/retriever.py`
-  - [ ] `class HybridRetriever` with `search(query: str, top_k: int = 5) -> list[Chunk]`
-  - [ ] Vector search via ChromaDB (prefix query with `"query: "`)
-  - [ ] BM25 search via pickled index
-  - [ ] Fuse with Reciprocal Rank Fusion (k=60)
-  - [ ] Return dataclass `Chunk(id: str, text: str, score: float, article_number: int)`
-- [ ] Write `backend/tests/test_retrieval.py` with 5 queries + expected article numbers:
-  - "que faire si je brûle un feu rouge" → article about red light
-  - "limite de vitesse en ville" → article about urban speed limits
-  - "documents obligatoires voiture" → article about required documents
-  - "perte de points permis" → article about license points
-  - "amende stationnement interdit" → article about parking fines
-- [ ] Run `python backend/scripts/build_index.py` (may take 2–5 min)
-- [ ] Run tests, iterate until ≥ 4/5 pass
-- [ ] Commit: `phase2: hybrid retriever with vector + BM25 fusion`
+- [x] Create `backend/scripts/build_index.py`
+  - [x] Load articles from JSON
+  - [x] Generate embeddings with `intfloat/multilingual-e5-small` (prefix passages with `"passage: "`)
+  - [x] Persist embeddings to `data/chroma_db/` via ChromaDB
+  - [x] Build BM25 index, pickle to `data/bm25.pkl`
+- [x] Create `backend/app/rag/retriever.py`
+  - [x] `class HybridRetriever` with `search(query: str, top_k: int = 5) -> list[Chunk]`
+  - [x] Vector search via ChromaDB (prefix query with `"query: "`)
+  - [x] BM25 search via pickled index
+  - [x] Fuse with Reciprocal Rank Fusion (k=60)
+  - [x] Return dataclass `Chunk(id: str, text: str, score: float, article_number: int)`
+- [x] Write `backend/tests/test_retrieval.py` with 5 queries + expected article numbers:
+  - "ne pas respecter un feu rouge" → Art.184 (red light/stop violation)
+  - "limite de vitesse en agglomération" → Art.185 (speed violation class-2)
+  - "permis de conduire documents controle" → Art.63 (registration cert on board)
+  - "retrait de points permis de conduire" → Art.24 (license cancelled, last point)
+  - "stationnement gênant amende" → Art.184 (illegal stopping/parking fines)
+- [x] Run `python backend/scripts/build_index.py` — 316 docs indexed in ~10 s on CPU
+- [x] Run tests, ≥ 4/5 pass — **5/5 pass** (+ exit gate test)
+- [x] Commit: `phase2: hybrid retriever with vector + BM25 fusion`
 
 ---
 
@@ -208,7 +208,7 @@ Only after Phase 7 is fully done. Pick in this order:
 ```
 Phase 0  [=======================] 100% ✓ exit gate passed
 Phase 1  [=======================] 100% ✓ exit gate passed — 316 articles (Arabic), pytest 4/4 green
-Phase 2  [_______________________] 0%
+Phase 2  [=======================] 100% ✓ exit gate passed — 5/5 queries hit expected article, pytest 10/10 green
 Phase 3  [_______________________] 0%
 Phase 4  [_______________________] 0%
 Phase 5  [_______________________] 0%

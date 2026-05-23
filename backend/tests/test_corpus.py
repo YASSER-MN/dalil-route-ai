@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-ARTICLES_PATH = Path("backend/data/articles.json")
+ARTICLES_PATH = Path(__file__).parent.parent / "data" / "articles.json"
 
 
 def _load() -> list[dict]:

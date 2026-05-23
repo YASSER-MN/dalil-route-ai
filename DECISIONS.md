@@ -28,3 +28,14 @@
 **Trade-offs:** Lower recall than `-base` or `-large`. If Phase 6 eval shows recall@5 < 80%, upgrade to `-base` (see PLAN.md Phase 6 fallback).
 
 ---
+
+## 2026-05-23 | Arabic version of Law 52-05 instead of French
+
+**Decision:** Use `textBased_arabic_version_52_05.pdf` (Arabic, text-based, 126 pages) as the corpus source instead of the originally planned French PDF (`Loi_52.05_Fr.pdf`).
+**Why:** The French PDF (`Loi_52.05_Fr.pdf`, 47 pages) is almost entirely scanned images — only 7 pages have an embedded text layer, yielding 47 extractable articles (articles 2–10 and 281–318). Tesseract OCR was not available on the build machine. The Arabic PDF is a digitally-born text document with all 126 pages extractable, yielding 316 articles (Articles 1–318). Approved by human 2026-05-23.
+**Trade-offs:**
+- Phase 2 test queries (written in French) will need Arabic equivalents — multilingual-e5-small must bridge the language gap. Cross-lingual recall will be validated in Phase 6.
+- `test_corpus.py` uses Arabic keyword checks (`سرعة` = speed, `إشارة` = signal) instead of French (`vitesse`, `feu`).
+- The `source` field is kept as `"Law 52-05"` to remain consistent with downstream code.
+
+---

@@ -2,8 +2,8 @@
 
 > **Claude Code: this is your single source of truth for what to build next. Check off tasks as you complete them. Do not start Phase N+1 until Phase N's exit gate passes.**
 
-**Current phase:** 0 — Setup (complete, exit gate passed)
-**Last updated:** 2026-05-22
+**Current phase:** 1 — Corpus Foundation (complete, exit gate passed)
+**Last updated:** 2026-05-23
 
 ---
 
@@ -28,16 +28,16 @@
 
 **Exit gate:** `pytest backend/tests/test_corpus.py` passes — `articles.json` has ≥ 100 entries, each with `number` (int) and `text` (≥ 50 chars).
 
-- [ ] Create `backend/scripts/ingest_pdf.py` with PDF → article extraction logic
-- [ ] Use regex `r'Article\s+\d+[\s.\-:]'` to split into articles
-- [ ] Clean each article body: strip whitespace, remove repeated page headers
-- [ ] Cap article text at 3000 chars (long ones get truncated)
-- [ ] Save to `backend/data/articles.json` (UTF-8, indent=2)
-- [ ] Write `backend/tests/test_corpus.py` — asserts ≥ 100 articles, schema valid
-- [ ] Run the script: `python backend/scripts/ingest_pdf.py`
-- [ ] **Manual checkpoint**: open `articles.json`, search for "feu rouge" — at least 2 articles should mention it. If not, fix the parser.
-- [ ] Commit `articles.json` to git (it's small, ~1 MB, and your corpus baseline)
-- [ ] Commit: `phase1: corpus extracted and validated`
+- [x] Create `backend/scripts/ingest_pdf.py` with PDF → article extraction logic
+- [x] Use regex to split into articles (Arabic: `N المادة` header pattern — see DECISIONS.md)
+- [x] Clean each article body: strip whitespace, remove repeated page headers
+- [x] Cap article text at 3000 chars (long ones get truncated)
+- [x] Save to `backend/data/articles.json` (UTF-8, indent=2)
+- [x] Write `backend/tests/test_corpus.py` — asserts ≥ 100 articles, schema valid
+- [x] Run the script: `python backend/scripts/ingest_pdf.py` → 316 articles extracted
+- [x] **Manual checkpoint**: Arabic keywords `سرعة` (speed) and `إشارة` (signal) found in ≥ 2 articles. French PDF replaced with Arabic text-based version (see DECISIONS.md).
+- [x] Commit `articles.json` to git (corpus baseline)
+- [x] Commit: `phase1: corpus extracted and validated`
 
 ---
 
@@ -207,7 +207,7 @@ Only after Phase 7 is fully done. Pick in this order:
 
 ```
 Phase 0  [=======================] 100% ✓ exit gate passed
-Phase 1  [_______________________] 0%
+Phase 1  [=======================] 100% ✓ exit gate passed — 316 articles (Arabic), pytest 4/4 green
 Phase 2  [_______________________] 0%
 Phase 3  [_______________________] 0%
 Phase 4  [_______________________] 0%

@@ -2,8 +2,8 @@
 
 > **Claude Code: this is your single source of truth for what to build next. Check off tasks as you complete them. Do not start Phase N+1 until Phase N's exit gate passes.**
 
-**Current phase:** _____  (Update this line at start of every session)
-**Last updated:** _____  (Update this every time you check off a task)
+**Current phase:** 0 — Setup (complete, exit gate passed)
+**Last updated:** 2026-05-22
 
 ---
 
@@ -11,16 +11,16 @@
 
 **Exit gate:** `python -c "import fitz, sentence_transformers, chromadb, groq"` runs without error.
 
-- [ ] `git init` and create initial commit with this `PLAN.md`, `CLAUDE.md`, and `.gitignore`
-- [ ] Create `.gitignore` with: `venv/`, `__pycache__/`, `.env`, `data/raw/*.pdf`, `data/chroma_db/`, `node_modules/`, `.next/`, `*.pyc`
-- [ ] Create Python venv: `python -m venv venv && source venv/bin/activate`
-- [ ] Create `backend/requirements.txt` with pinned versions
-- [ ] `pip install -r backend/requirements.txt`
-- [ ] Create `.env.example` listing required vars: `GROQ_API_KEY`
+- [x] `git init` and create initial commit with this `PLAN.md`, `CLAUDE.md`, and `.gitignore`
+- [x] Create `.gitignore` with: `venv/`, `__pycache__/`, `.env`, `data/raw/*.pdf`, `data/chroma_db/`, `node_modules/`, `.next/`, `*.pyc`
+- [x] Create Python venv: `python -m venv venv && source venv/bin/activate`
+- [x] Create `backend/requirements.txt` with pinned versions
+- [x] `pip install -r backend/requirements.txt`
+- [x] Create `.env.example` listing required vars: `GROQ_API_KEY`, `ADMIN_KEY`
 - [ ] Ask human for Groq API key, create `.env` (gitignored)
-- [ ] Place `Loi_52.05_Fr.pdf` in `backend/data/raw/` (ask human to download from official URL)
-- [ ] Verify: `python -c "import fitz; print(fitz.open('backend/data/raw/Loi_52.05_Fr.pdf').page_count)"` prints a number
-- [ ] Commit: `phase0: project setup complete`
+- [x] Place `Loi_52.05_Fr.pdf` in `backend/data/raw/` (confirmed present)
+- [x] Verify: `python -c "import fitz; print(fitz.open('backend/data/raw/Loi_52.05_Fr.pdf').page_count)"` prints a number
+- [x] Commit: `phase0: project setup complete`
 
 ---
 
@@ -206,7 +206,7 @@ Only after Phase 7 is fully done. Pick in this order:
 ## Progress Snapshot
 
 ```
-Phase 0  [_______________________] 0%
+Phase 0  [=======================] 100% ✓ exit gate passed
 Phase 1  [_______________________] 0%
 Phase 2  [_______________________] 0%
 Phase 3  [_______________________] 0%

@@ -4,8 +4,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    groq_api_key: str = ""
-    google_ai_api_key: str = ""
+    openrouter_api_key: str = ""  # primary LLM — DeepSeek V3 via openrouter.ai (free)
+    groq_api_key: str = ""        # kept for fallback
     admin_key: str = "changeme"
     cors_origins: list[str] = ["*"]
 

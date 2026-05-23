@@ -210,7 +210,7 @@ Phase 0  [=======================] 100% ✓ exit gate passed
 Phase 1  [=======================] 100% ✓ exit gate passed — 316 articles (Arabic), pytest 4/4 green
 Phase 2  [=======================] 100% ✓ exit gate passed — 5/5 queries hit expected article, pytest 10/10 green
 Phase 3  [=======================] 100% ✓ exit gate passed — 7/7 tests green (3 generation + 4 validator)
-Phase 4  [=======================] 100% ✓ exit gate passed — 5/5 tests green, all endpoints verified
+Phase 4  [=======================] 100% ✓ exit gate passed — 22/22 tests green, Swagger + live /ask verified
 Phase 5  [_______________________] 0%
 Phase 6  [_______________________] 0%
 Phase 7  [_______________________] 0%

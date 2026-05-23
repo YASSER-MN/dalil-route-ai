@@ -4,14 +4,15 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-from groq import Groq
+from openai import OpenAI
 
 from backend.app.rag.retriever import Chunk
 
 _PROMPT_PATH = Path(__file__).parent / "prompts" / "system_v1.txt"
 _SYSTEM_PROMPT = _PROMPT_PATH.read_text(encoding="utf-8")
 
-MODEL = "llama-3.3-70b-versatile"
+# DeepSeek V3 via OpenRouter — best instruction-following + cheapest paid rate
+MODEL = "deepseek/deepseek-chat-v3-0324"
 PROMPT_VERSION = "v1"
 
 
@@ -25,7 +26,10 @@ class Answer:
 
 class AnswerGenerator:
     def __init__(self, api_key: str | None = None) -> None:
-        self._client = Groq(api_key=api_key or os.getenv("GROQ_API_KEY"))
+        self._client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=api_key or os.getenv("OPENROUTER_API_KEY"),
+        )
 
     def generate(self, question: str, evidence: list[Chunk]) -> Answer:
         evidence_block = "\n".join(

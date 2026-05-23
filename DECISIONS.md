@@ -13,6 +13,14 @@
 
 ---
 
+## 2026-05-22 | llama-3.3-70b-versatile instead of llama-3.1-70b-versatile
+
+**Decision:** Use `llama-3.3-70b-versatile` as the Groq LLM.
+**Why:** `llama-3.1-70b-versatile` was decommissioned by Groq (HTTP 400 model_decommissioned). `llama-3.3-70b-versatile` is the official drop-in replacement — same API, same free tier, better benchmark scores. Approved by human 2026-05-22.
+**Trade-offs:** None. Strictly an improvement. Model name string is the only change.
+
+---
+
 ## 2026-05-22 | intfloat/multilingual-e5-small for embeddings
 
 **Decision:** Use the small multilingual E5 model, not a larger variant.

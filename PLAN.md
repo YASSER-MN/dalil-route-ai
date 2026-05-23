@@ -17,7 +17,7 @@
 - [x] Create `backend/requirements.txt` with pinned versions
 - [x] `pip install -r backend/requirements.txt`
 - [x] Create `.env.example` listing required vars: `GROQ_API_KEY`, `ADMIN_KEY`
-- [ ] Ask human for Groq API key, create `.env` (gitignored)
+- [x] Ask human for Groq API key, create `.env` (gitignored)
 - [x] Place `Loi_52.05_Fr.pdf` in `backend/data/raw/` (confirmed present)
 - [x] Verify: `python -c "import fitz; print(fitz.open('backend/data/raw/Loi_52.05_Fr.pdf').page_count)"` prints a number
 - [x] Commit: `phase0: project setup complete`

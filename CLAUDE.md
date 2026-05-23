@@ -37,7 +37,7 @@ If you feel tempted to "just sketch out the frontend while I think about retriev
 | Embeddings      | `sentence-transformers` + `intfloat/multilingual-e5-small` | OpenAI ada (paid)            |
 | Vector store    | `chromadb` (persistent, local)         | Pinecone (paid), Weaviate (overkill) |
 | Keyword search  | `rank-bm25`                            | Elasticsearch (overkill)     |
-| LLM             | Groq API + `llama-3.1-70b-versatile`   | OpenAI (paid), local llama (too slow) |
+| LLM             | Groq API + `llama-3.3-70b-versatile`   | OpenAI (paid), local llama (too slow) |
 | Backend         | FastAPI + uvicorn + slowapi            | Flask, Django                |
 | Persistence     | SQLite (V1) — Postgres only if needed  | Postgres from day 1          |
 | Frontend        | Next.js 14 (app router) + TailwindCSS  | Pure React, Vue, vanilla     |

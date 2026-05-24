@@ -6,7 +6,7 @@
 
 ## 1. The One Rule That Overrides Everything
 
-**No source = no answer.** Every legal claim in any generated answer must be traceable to a retrieved chunk from a validated source. If you find yourself writing code that lets the LLM answer without retrieved evidence, **stop and re-read this file**.
+**No source = no answer.** Every legal claim in any generated answer must be traceable to a retrieved chunk from a validated source. If you find yourself writing code that lets the LLM answer without retrieved evidence, **stop and re-read this file**. The corpus is in Arabic (official consolidated text). Queries arrive in French today, Darija tomorrow. All queries are translated to Arabic before retrieval. Citations always trace back to the official Arabic source.
 
 ---
 
@@ -34,7 +34,8 @@ If you feel tempted to "just sketch out the frontend while I think about retriev
 | --------------- | -------------------------------------- | ---------------------------- |
 | Language        | Python 3.11+ (backend), TypeScript (UI)| —                            |
 | PDF parsing     | `pymupdf` (fitz)                       | pdfplumber, pypdf2 (slower)  |
-| Embeddings      | `sentence-transformers` + `intfloat/multilingual-e5-small` | OpenAI ada (paid)            |
+| Embeddings      | `sentence-transformers` + `intfloat/multilingual-e5-base` | OpenAI ada (paid)            |
+| Query translation | Groq `llama-3.1-70b-versatile`        | —                            |
 | Vector store    | `chromadb` (persistent, local)         | Pinecone (paid), Weaviate (overkill) |
 | Keyword search  | `rank-bm25`                            | Elasticsearch (overkill)     |
 | LLM             | Groq API + `llama-3.3-70b-versatile`   | OpenAI (paid), local llama (too slow) |

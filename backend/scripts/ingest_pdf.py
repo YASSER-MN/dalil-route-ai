@@ -11,13 +11,36 @@ OUTPUT_PATH = Path("backend/data/articles.json")
 SOURCE = "Law 52-05"
 MAX_BODY_CHARS = 3000
 
+# Arabic-Indic digit map for normalisation
+_AR_INDIC = str.maketrans("٠١٢٣٤٥٦٧٨٩", "0123456789")
+
 # Both ligature and non-ligature forms of "المادة" appear in this PDF
 _MADDA = r"(?:المادة|املادة)"
-# Article header: a line containing only "N المادة" (number before the word, RTL extraction artifact)
-_HEADER = re.compile(r"(?:^|\n)\s*(\d+)\s+" + _MADDA + r"\s*\n", re.MULTILINE)
-# Per-page artifacts: standalone page number then government header on next line
+
+# Number group: Western AND Arabic-Indic digits
+_NUM = r"([٠١٢٣٤٥٦٧٨٩\d]+)"
+
+# Two header forms found in text-extracted Arabic PDFs:
+#   RTL-artifact form : "184 المادة" (number precedes word due to bidi extraction)
+#   Normal form       : "المادة 184"
+#   French fallback   : "Article 184"  (should not appear in this corpus but handled)
+_HEADER = re.compile(
+    r"(?:^|\n)\s*(?:"
+    + _NUM + r"\s+" + _MADDA       # RTL-artifact: "184 المادة"
+    + r"|" + _MADDA + r"\s+" + _NUM  # Normal Arabic: "المادة 184"
+    + r"|Article\s+" + _NUM + r"[\s.\-:]"  # French fallback
+    + r")\s*\n",
+    re.MULTILINE,
+)
+
 _PAGE_NUM = re.compile(r"(?m)^\d{1,3}\n")
 _GOV_HEADER = re.compile(r"[^\n]*للحكومة[^\n]*\n")
+
+
+def _normalise_num(m: re.Match) -> int:
+    """Extract article number from any of the three capture groups and normalise."""
+    raw = m.group(1) or m.group(2) or m.group(3)
+    return int(raw.translate(_AR_INDIC))
 
 
 def _extract_raw(pdf_path: Path) -> str:
@@ -35,7 +58,7 @@ def _parse_articles(text: str) -> list[dict]:
     headers = list(_HEADER.finditer(text))
     articles: list[dict] = []
     for i, m in enumerate(headers):
-        number = int(m.group(1))
+        number = _normalise_num(m)
         start = m.end()
         end = headers[i + 1].start() if i + 1 < len(headers) else len(text)
         body = text[start:end]

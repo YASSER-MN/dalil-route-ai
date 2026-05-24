@@ -77,9 +77,25 @@ def build_bm25_index(articles: list[dict]) -> None:
     print(f"BM25: index pickled -> {BM25_PATH}")
 
 
+def _index_already_built(expected_count: int) -> bool:
+    """Return True if ChromaDB and BM25 already match the corpus — skip rebuild."""
+    if not CHROMA_DIR.exists() or not BM25_PATH.exists():
+        return False
+    try:
+        client = chromadb.PersistentClient(path=str(CHROMA_DIR))
+        collection = client.get_collection(COLLECTION_NAME)
+        return collection.count() == expected_count
+    except Exception:
+        return False
+
+
 def main() -> None:
     articles = load_articles()
     print(f"Loaded {len(articles)} articles from {ARTICLES_PATH}")
+
+    if _index_already_built(len(articles)):
+        print(f"Index already built ({len(articles)} docs in ChromaDB + BM25 present) — skipping.")
+        return
 
     model = SentenceTransformer(MODEL_NAME)
     print(f"Model loaded: {MODEL_NAME}")

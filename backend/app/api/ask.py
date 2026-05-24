@@ -6,9 +6,11 @@ from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
+from backend.app.config import settings
 from backend.app.db.models import AnswerTrace
 from backend.app.db.session import get_db
 from backend.app.rag.generator import AnswerGenerator
+from backend.app.rag.query_translator import QueryTranslator
 from backend.app.rag.retriever import HybridRetriever
 from backend.app.rag.validator import validate_citations
 from backend.app.security.pii import redact
@@ -24,7 +26,8 @@ _generator: AnswerGenerator | None = None
 def _get_retriever() -> HybridRetriever:
     global _retriever
     if _retriever is None:
-        _retriever = HybridRetriever()
+        translator = QueryTranslator(api_key=settings.groq_api_key) if settings.groq_api_key else None
+        _retriever = HybridRetriever(translator=translator)
     return _retriever
 
 

@@ -35,7 +35,7 @@ If you feel tempted to "just sketch out the frontend while I think about retriev
 | Language        | Python 3.11+ (backend), TypeScript (UI)| —                            |
 | PDF parsing     | `pymupdf` (fitz)                       | pdfplumber, pypdf2 (slower)  |
 | Embeddings      | `sentence-transformers` + `intfloat/multilingual-e5-base` | OpenAI ada (paid)            |
-| Query translation | Groq `llama-3.1-70b-versatile`        | —                            |
+| Query translation | Groq `llama-3.3-70b-versatile`        | —                            |
 | Vector store    | `chromadb` (persistent, local)         | Pinecone (paid), Weaviate (overkill) |
 | Keyword search  | `rank-bm25`                            | Elasticsearch (overkill)     |
 | LLM             | Groq API + `llama-3.3-70b-versatile`   | OpenAI (paid), local llama (too slow) |

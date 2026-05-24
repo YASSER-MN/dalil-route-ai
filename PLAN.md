@@ -2,8 +2,8 @@
 
 > **Claude Code: this is your single source of truth for what to build next. Check off tasks as you complete them. Do not start Phase N+1 until Phase N's exit gate passes.**
 
-**Current phase:** 5 — Frontend (complete, exit gate passed)
-**Last updated:** 2026-05-23
+**Current phase:** 6 — Evaluation (complete, exit gate passed)
+**Last updated:** 2026-05-24
 
 ---
 
@@ -150,22 +150,21 @@
 
 **Exit gate:** `python backend/scripts/run_eval.py` reports: recall@5 ≥ 80%, refusal accuracy = 100%, citation validity ≥ 95%.
 
-- [ ] Create `backend/data/golden_set.json` with 50 questions (10 per category):
-  - speed (5), signals (5), documents (5), points (5), parking (5)
-  - professional transport (5), unsafe requests (5 — must refuse)
-  - ambiguous (5 — must show "missing info")
-  - definitions (5)
-- [ ] Each question has: `id`, `question`, `expected_articles: [int]`, `must_refuse: bool`, `category`
-- [ ] **STOP — ask human to review the golden set before running**
-- [ ] Create `backend/scripts/run_eval.py`
-  - [ ] Load golden set
-  - [ ] For each Q: run retrieval, run generation, run validation
-  - [ ] Compute metrics: recall@5, refusal correctness, citation validity, % answers with disclaimer
-  - [ ] Output: console summary + `backend/data/eval_results_<timestamp>.json`
-- [ ] Run eval, iterate on prompt/retrieval until exit gate passes
-- [ ] If recall < 80%: bigger embedding model (`-base` or `-large`) or chunking review
-- [ ] If refusal < 100%: strengthen system prompt's refusal section
-- [ ] Commit: `phase6: golden set evaluation passing all gates`
+- [x] Create `backend/data/golden_set.json` with 50 questions (9 categories)
+  - speed (6), signals (6), documents (6), points (6), parking (6)
+  - professional transport (5), unsafe requests (5 — all must_refuse:true)
+  - ambiguous (5 — expected_articles:[]), definitions (5)
+- [x] Each question has: `id`, `question`, `expected_articles: [int]`, `must_refuse: bool`, `category`
+- [x] **STOP — human reviewed and approved golden set**
+- [x] Create `backend/scripts/run_eval.py`
+  - [x] Load golden set, init retriever (translator + reranker) + generator
+  - [x] For each Q: run retrieval, run generation, run validation
+  - [x] Compute metrics: recall@5, refusal correctness, citation validity, disclaimer rate
+  - [x] Output: console summary + `backend/data/eval_results_<timestamp>.json`
+- [x] Architecture: added French→Arabic query translation (Groq llama-3.3-70b-versatile)
+- [x] Architecture: upgraded embeddings to intfloat/multilingual-e5-base
+- [x] Architecture: added BAAI/bge-reranker-v2-m3 cross-encoder reranker (fetch 4× candidates, rerank to top-5)
+- [x] Commit: `phase6: cross-encoder reranking, eval gates passed`
 
 ---
 
@@ -213,7 +212,7 @@ Phase 2  [=======================] 100% ✓ exit gate passed — 5/5 queries hit
 Phase 3  [=======================] 100% ✓ exit gate passed — 7/7 tests green (3 generation + 4 validator)
 Phase 4  [=======================] 100% ✓ exit gate passed — 22/22 tests green, Swagger + live /ask verified
 Phase 5  [=======================] 100% ✓ exit gate passed — npm run build clean, API e2e verified, feedback in DB
-Phase 6  [_______________________] 0%
+Phase 6  [=======================] 100% ✓ exit gate passed — recall@5=90%, refusal=100%, citation=97.78%
 Phase 7  [_______________________] 0%
 ```
 

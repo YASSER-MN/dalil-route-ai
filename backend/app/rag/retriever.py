@@ -1,18 +1,25 @@
 from __future__ import annotations
 
+import logging
 import pickle
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import chromadb
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import CrossEncoder, SentenceTransformer
+
+if TYPE_CHECKING:
+    from backend.app.rag.query_translator import QueryTranslator
 
 DATA_DIR = Path(__file__).parent.parent.parent / "data"
 CHROMA_DIR = DATA_DIR / "chroma_db"
 BM25_PATH = DATA_DIR / "bm25.pkl"
 COLLECTION_NAME = "dalil_articles"
-MODEL_NAME = "intfloat/multilingual-e5-small"
+MODEL_NAME = "intfloat/multilingual-e5-base"
+RERANKER_NAME = "BAAI/bge-reranker-v2-m3"
+
+log = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -21,6 +28,8 @@ class Chunk:
     text: str
     score: float
     article_number: int
+    query_fr: str = ""
+    query_ar: str = ""
 
 
 def _rrf_score(rank: int, k: int = 60) -> float:
@@ -28,7 +37,12 @@ def _rrf_score(rank: int, k: int = 60) -> float:
 
 
 class HybridRetriever:
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        translator: QueryTranslator | None = None,
+        use_reranker: bool = True,
+    ) -> None:
+        self._translator = translator
         self._model = SentenceTransformer(MODEL_NAME)
 
         client = chromadb.PersistentClient(path=str(CHROMA_DIR))
@@ -45,12 +59,30 @@ class HybridRetriever:
         for doc, meta in zip(results["documents"], results["metadatas"]):
             self._documents[meta["number"]] = doc
 
-    def search(self, query: str, top_k: int = 5) -> list[Chunk]:
-        fetch_k = 10
+        self._reranker: CrossEncoder | None = None
+        if use_reranker:
+            self._reranker = CrossEncoder(RERANKER_NAME, max_length=512)
+            log.debug("Reranker loaded: %s", RERANKER_NAME)
 
-        # Vector search — e5 requires "query: " prefix
+    def search(
+        self,
+        query: str,
+        top_k: int = 5,
+        translate_query: bool = True,
+    ) -> list[Chunk]:
+        query_fr = query
+        query_ar = query
+
+        if translate_query and self._translator is not None:
+            query_ar = self._translator.to_arabic(query)
+            log.debug("Query translation: %r -> %r", query_fr, query_ar)
+
+        # Fetch a wider candidate pool when reranking; 4× gives 20 for k=5
+        fetch_k = top_k * 4 if self._reranker is not None else 10
+
+        # Vector search — e5 requires "query: " prefix; use Arabic query
         vec = self._model.encode(
-            f"query: {query}",
+            f"query: {query_ar}",
             normalize_embeddings=True,
         ).tolist()
         vec_results = self._collection.query(
@@ -60,9 +92,8 @@ class HybridRetriever:
         )
         vec_ids: list[str] = vec_results["ids"][0]
 
-        # BM25 search — only include articles with a positive score so that
-        # zero-score ties (e.g. French query vs Arabic corpus) don't pollute RRF
-        query_tokens = query.split()
+        # BM25 — use Arabic query tokens so they match the Arabic corpus
+        query_tokens = query_ar.split()
         bm25_scores = self._bm25.get_scores(query_tokens)
         top_bm25_indices = sorted(
             range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True
@@ -80,18 +111,44 @@ class HybridRetriever:
         for rank, article_id in enumerate(bm25_ids):
             rrf[article_id] = rrf.get(article_id, 0.0) + _rrf_score(rank)
 
-        ranked = sorted(rrf.items(), key=lambda x: x[1], reverse=True)[:top_k]
+        fused = sorted(rrf.items(), key=lambda x: x[1], reverse=True)
 
-        chunks: list[Chunk] = []
-        for article_id_str, score in ranked:
+        # Build candidate chunks from fused results
+        candidates: list[Chunk] = []
+        for article_id_str, score in fused:
             article_number = int(article_id_str)
             text = self._documents.get(article_number, "")
-            chunks.append(
+            candidates.append(
                 Chunk(
                     id=article_id_str,
                     text=text,
                     score=score,
                     article_number=article_number,
+                    query_fr=query_fr,
+                    query_ar=query_ar,
                 )
             )
-        return chunks
+
+        if self._reranker is None:
+            return candidates[:top_k]
+
+        # Cross-encoder reranking: score each (arabic_query, article_text) pair
+        pairs = [(query_ar, chunk.text) for chunk in candidates]
+        rerank_scores: list[float] = self._reranker.predict(pairs).tolist()
+
+        reranked = sorted(
+            zip(candidates, rerank_scores),
+            key=lambda x: x[1],
+            reverse=True,
+        )
+        return [
+            Chunk(
+                id=c.id,
+                text=c.text,
+                score=float(s),
+                article_number=c.article_number,
+                query_fr=c.query_fr,
+                query_ar=c.query_ar,
+            )
+            for c, s in reranked[:top_k]
+        ]

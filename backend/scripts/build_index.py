@@ -13,7 +13,7 @@ ARTICLES_PATH = DATA_DIR / "articles.json"
 CHROMA_DIR = DATA_DIR / "chroma_db"
 BM25_PATH = DATA_DIR / "bm25.pkl"
 COLLECTION_NAME = "dalil_articles"
-MODEL_NAME = "intfloat/multilingual-e5-small"
+MODEL_NAME = "intfloat/multilingual-e5-base"
 BATCH_SIZE = 64
 
 

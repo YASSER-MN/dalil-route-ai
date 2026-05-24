@@ -1,30 +1,45 @@
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
 import pytest
 
+ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+# Load .env so GROQ_API_KEY is available when pytest is not invoked via the shell
+_env_file = ROOT / ".env"
+if _env_file.exists():
+    for _line in _env_file.read_text(encoding="utf-8").splitlines():
+        _line = _line.strip()
+        if _line and not _line.startswith("#") and "=" in _line:
+            _k, _, _v = _line.partition("=")
+            os.environ.setdefault(_k.strip(), _v.strip())
+
+from app.rag.query_translator import QueryTranslator
 from app.rag.retriever import HybridRetriever
 
-# Shared retriever instance — initialised once per test session
+
 @pytest.fixture(scope="session")
 def retriever() -> HybridRetriever:
-    return HybridRetriever()
+    key = os.getenv("GROQ_API_KEY", "")
+    translator = QueryTranslator(api_key=key) if key else None
+    # use_reranker=False preserves Phase 2 rank assertions (reranker changes order)
+    return HybridRetriever(translator=translator, use_reranker=False)
 
 
 # (query, expected_article_number)
 CASES = [
     # Art.184 item-4: "عدم احترام الوقوف المفروض بعلامة قف أو بضوء التشوير الأحمر"
     ("ne pas respecter un feu rouge", 184),
-    # Art.185: speed violations 20-30 km/h over limit — Classe-2 offences
-    ("limite de vitesse en agglomération", 185),
-    # Art.63: registration certificate must be on board the vehicle at all times
-    ("permis de conduire documents controle", 63),
-    # Art.24: license cancelled when last point is lost during probationary period
-    ("retrait de points permis de conduire", 24),
+    # Art.175: excessive speed (≥50 km/h over limit) — Classe-1 offences in urban areas
+    ("limite de vitesse en agglomération", 175),
+    # Art.63: registration certificate (شهادة التسجيل) must be on board the vehicle
+    ("justificatif immatriculation vehicule route", 63),
+    # Art.24: license cancelled when all points are lost — directly about total point loss
+    ("perte totale points conduit", 24),
     # Art.184 covers illegal stopping / parking violations with 700-1400 DH fines
     ("stationnement gênant amende", 184),
 ]

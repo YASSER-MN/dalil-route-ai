@@ -17,8 +17,7 @@ build/
 
 # Data (large / generated)
 backend/data/raw/*.pdf
-backend/data/chroma_db/
-backend/data/bm25.pkl
+# chroma_db and bm25.pkl are committed (pre-built index, 8.5 MB total — see DECISIONS.md)
 backend/data/eval_results_*.json
 backend/data/traces.db
 

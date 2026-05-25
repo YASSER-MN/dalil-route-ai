@@ -77,8 +77,9 @@ class HybridRetriever:
             query_ar = self._translator.to_arabic(query)
             log.debug("Query translation: %r -> %r", query_fr, query_ar)
 
-        # Fetch a wider candidate pool when reranking; 4× gives 20 for k=5
-        fetch_k = top_k * 4 if self._reranker is not None else 10
+        # 2× gives 10 candidates for k=5 — enough for the reranker while
+        # halving CPU time vs the previous 4× (which caused 15-25s latency).
+        fetch_k = top_k * 2 if self._reranker is not None else 10
 
         # Vector search — e5 requires "query: " prefix; use Arabic query
         vec = self._model.encode(

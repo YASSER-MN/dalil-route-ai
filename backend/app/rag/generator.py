@@ -6,7 +6,7 @@ from pathlib import Path
 
 from openai import OpenAI
 
-from backend.app.rag.retriever import Chunk
+from app.rag.retriever import Chunk
 
 _PROMPT_PATH = Path(__file__).parent / "prompts" / "system_v1.txt"
 _SYSTEM_PROMPT = _PROMPT_PATH.read_text(encoding="utf-8")

@@ -10,7 +10,7 @@ import chromadb
 from sentence_transformers import CrossEncoder, SentenceTransformer
 
 if TYPE_CHECKING:
-    from backend.app.rag.query_translator import QueryTranslator
+    from app.rag.query_translator import QueryTranslator
 
 DATA_DIR = Path(__file__).parent.parent.parent / "data"
 CHROMA_DIR = DATA_DIR / "chroma_db"

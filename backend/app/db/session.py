@@ -6,7 +6,7 @@ from typing import Generator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from backend.app.db.models import Base
+from app.db.models import Base
 
 _DB_PATH = Path(__file__).parent.parent.parent / "data" / "traces.db"
 _DB_PATH.parent.mkdir(parents=True, exist_ok=True)

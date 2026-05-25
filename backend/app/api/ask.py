@@ -6,15 +6,15 @@ from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from backend.app.config import settings
-from backend.app.db.models import AnswerTrace
-from backend.app.db.session import get_db
-from backend.app.rag.generator import AnswerGenerator
-from backend.app.rag.query_translator import QueryTranslator
-from backend.app.rag.retriever import HybridRetriever
-from backend.app.rag.validator import validate_citations
-from backend.app.security.pii import redact
-from backend.app.security.rate_limit import limiter
+from app.config import settings
+from app.db.models import AnswerTrace
+from app.db.session import get_db
+from app.rag.generator import AnswerGenerator
+from app.rag.query_translator import QueryTranslator
+from app.rag.retriever import HybridRetriever
+from app.rag.validator import validate_citations
+from app.security.pii import redact
+from app.security.rate_limit import limiter
 
 router = APIRouter()
 

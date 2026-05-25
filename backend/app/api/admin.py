@@ -3,9 +3,9 @@ from typing import Annotated, Any, Optional
 from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy.orm import Session
 
-from backend.app.config import settings
-from backend.app.db.models import AnswerTrace
-from backend.app.db.session import get_db
+from app.config import settings
+from app.db.models import AnswerTrace
+from app.db.session import get_db
 
 router = APIRouter()
 

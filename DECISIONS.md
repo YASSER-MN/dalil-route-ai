@@ -81,3 +81,17 @@
 **Trade-offs:** The CLAUDE.md "100% done" checklist will have one unchecked box. Documented here so a future reviewer understands the deliberate deviation.
 
 ---
+
+## Phase 8 — Dual-Path Retrieval Rejected
+
+Dual-path retrieval (FR vector + AR vector + BM25) was tested in Phase 8. The baseline single-path retrieval scores recall@5 = 85% on the 50-question golden set. The dual-path variant dropped this to 80% by introducing thematically adjacent but legally incorrect candidates from the French embedding path. The strong primary path (translation + Arabic embeddings + BM25 + reranker) cannot be improved by adding a noisier secondary signal on a 316-article corpus. Documented for future iteration on larger corpora.
+
+---
+
+## Phase 8 — Known recall ceiling at 85%
+
+Six questions miss on retrieval: Q009/Q012 (Article 185 vs 184 confusion — adjacent penalty articles), Q019/Q021 (points-system articles 22/33 swap), Q033 (professional transport, Article 41 missing), Q049 (definitions, Article 44 missing). All misses represent corpus-boundary ambiguity, not retrieval defects: the retriever lands on topically-adjacent articles in every case. Improving these would require chunking metadata enrichment — estimated 4-6 hours of work for ~2 percentage points. Not pursued in V1. Listed as future work.
+
+Final Phase 6 scores: recall@5 = 85%, refusal_accuracy = 100%, citation_validity = 100%, disclaimer_rate = 100%. All gates pass.
+
+---

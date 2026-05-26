@@ -18,20 +18,26 @@ from app.security.rate_limit import limiter
 
 router = APIRouter()
 
-# Module-level singletons — loaded once at startup
+_translator: QueryTranslator | None = None
 _retriever: HybridRetriever | None = None
 _generator: AnswerGenerator | None = None
 
 
-def _get_retriever() -> HybridRetriever:
+def get_translator() -> QueryTranslator | None:
+    global _translator
+    if _translator is None and settings.groq_api_key:
+        _translator = QueryTranslator(api_key=settings.groq_api_key)
+    return _translator
+
+
+def get_retriever() -> HybridRetriever:
     global _retriever
     if _retriever is None:
-        translator = QueryTranslator(api_key=settings.groq_api_key) if settings.groq_api_key else None
-        _retriever = HybridRetriever(translator=translator)
+        _retriever = HybridRetriever(translator=get_translator())
     return _retriever
 
 
-def _get_generator() -> AnswerGenerator:
+def get_generator() -> AnswerGenerator:
     global _generator
     if _generator is None:
         _generator = AnswerGenerator()
@@ -66,8 +72,8 @@ async def ask(
     question_hash = hashlib.sha256(body.question.encode()).hexdigest()
     redacted_question, pii_types = redact(body.question)
 
-    retriever = _get_retriever()
-    generator = _get_generator()
+    retriever = get_retriever()
+    generator = get_generator()
 
     chunks = retriever.search(redacted_question, top_k=5)
     answer = generator.generate(redacted_question, chunks)

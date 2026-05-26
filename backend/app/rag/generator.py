@@ -40,8 +40,8 @@ class AnswerGenerator:
 
         response = self._client.chat.completions.create(
             model=MODEL,
-            temperature=0.1,
-            max_tokens=1024,
+            temperature=0.0,
+            max_tokens=768,
             messages=[
                 {"role": "system", "content": _SYSTEM_PROMPT},
                 {"role": "user", "content": user_message},

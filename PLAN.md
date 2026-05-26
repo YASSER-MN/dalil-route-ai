@@ -212,7 +212,7 @@ Phase 2  [=======================] 100% ✓ exit gate passed — 5/5 queries hit
 Phase 3  [=======================] 100% ✓ exit gate passed — 7/7 tests green (3 generation + 4 validator)
 Phase 4  [=======================] 100% ✓ exit gate passed — 22/22 tests green, Swagger + live /ask verified
 Phase 5  [=======================] 100% ✓ exit gate passed — npm run build clean, API e2e verified, feedback in DB
-Phase 6  [=======================] 100% ✓ exit gate passed — recall@5=90%, refusal=100%, citation=97.78%
+Phase 6  [=======================] 100% ✓ exit gate passed — recall@5=85%, refusal=100%, citation=100%, disclaimer=100%
 Phase 7  [_______________________] 0%
 ```
 

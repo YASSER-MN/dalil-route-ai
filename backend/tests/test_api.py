@@ -48,8 +48,8 @@ def reset_rate_limiter() -> None:
 
 # ── Tests — non-rate-limit first ─────────────────────────────────────────────
 
-@patch("backend.app.api.ask._get_retriever", return_value=_make_mock_retriever())
-@patch("backend.app.api.ask._get_generator", return_value=_make_mock_generator())
+@patch("backend.app.api.ask.get_retriever", return_value=_make_mock_retriever())
+@patch("backend.app.api.ask.get_generator", return_value=_make_mock_generator())
 def test_ask_legal_question_returns_valid_schema(mock_gen: MagicMock, mock_ret: MagicMock) -> None:
     with TestClient(app, raise_server_exceptions=False) as client:
         resp = client.post("/ask", json={"question": "Quelle est la limite de vitesse en agglomération?"})
@@ -62,8 +62,8 @@ def test_ask_legal_question_returns_valid_schema(mock_gen: MagicMock, mock_ret: 
     assert len(data["sources"]) > 0
 
 
-@patch("backend.app.api.ask._get_retriever", return_value=_make_mock_retriever())
-@patch("backend.app.api.ask._get_generator", return_value=_make_mock_generator())
+@patch("backend.app.api.ask.get_retriever", return_value=_make_mock_retriever())
+@patch("backend.app.api.ask.get_generator", return_value=_make_mock_generator())
 def test_ask_redacts_cin(mock_gen: MagicMock, mock_ret: MagicMock) -> None:
     with TestClient(app, raise_server_exceptions=False) as client:
         resp = client.post("/ask", json={"question": "My CIN is AB1234567, what is the speed limit?"})
@@ -90,8 +90,8 @@ def test_admin_traces_with_correct_key() -> None:
 
 # ── Rate limit test last — exhausts the quota ─────────────────────────────────
 
-@patch("backend.app.api.ask._get_retriever", return_value=_make_mock_retriever())
-@patch("backend.app.api.ask._get_generator", return_value=_make_mock_generator())
+@patch("backend.app.api.ask.get_retriever", return_value=_make_mock_retriever())
+@patch("backend.app.api.ask.get_generator", return_value=_make_mock_generator())
 def test_ask_rate_limit_triggers(mock_gen: MagicMock, mock_ret: MagicMock) -> None:
     triggered = False
     with TestClient(app, raise_server_exceptions=False) as client:

@@ -88,6 +88,49 @@ def test_admin_traces_with_correct_key() -> None:
     assert "total" in data
 
 
+# ── Scope filter tests ────────────────────────────────────────────────────────
+
+def test_greeting_hello_returns_scope_redirect() -> None:
+    with TestClient(app, raise_server_exceptions=False) as client:
+        resp = client.post("/ask", json={"question": "hello"})
+    assert resp.status_code == 200, resp.text
+    data = resp.json()
+    assert data["sources"] == []
+    assert data["confidence"] == "info"
+    assert "Dalil Route" in data["answer"]
+
+
+def test_greeting_arabic_salam_returns_scope_redirect() -> None:
+    with TestClient(app, raise_server_exceptions=False) as client:
+        resp = client.post("/ask", json={"question": "سلام"})
+    assert resp.status_code == 200, resp.text
+    data = resp.json()
+    assert data["sources"] == []
+    assert data["confidence"] == "info"
+    assert "Dalil Route" in data["answer"]
+
+
+def test_short_input_returns_scope_redirect() -> None:
+    with TestClient(app, raise_server_exceptions=False) as client:
+        resp = client.post("/ask", json={"question": "ok"})
+    assert resp.status_code == 200, resp.text
+    data = resp.json()
+    assert data["sources"] == []
+    assert data["confidence"] == "info"
+    assert "Dalil Route" in data["answer"]
+
+
+@patch("backend.app.api.ask.get_retriever", return_value=_make_mock_retriever())
+@patch("backend.app.api.ask.get_generator", return_value=_make_mock_generator())
+def test_real_question_still_works(mock_gen: MagicMock, mock_ret: MagicMock) -> None:
+    with TestClient(app, raise_server_exceptions=False) as client:
+        resp = client.post("/ask", json={"question": "Quelle sanction feu rouge?"})
+    assert resp.status_code == 200, resp.text
+    data = resp.json()
+    assert len(data["sources"]) > 0
+    assert data["confidence"] in ("élevée", "moyenne", "faible")
+
+
 # ── Rate limit test last — exhausts the quota ─────────────────────────────────
 
 @patch("backend.app.api.ask.get_retriever", return_value=_make_mock_retriever())

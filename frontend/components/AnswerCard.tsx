@@ -50,9 +50,11 @@ const SECTION_LABELS: Record<string, string> = {
 };
 
 export default function AnswerCard({ response }: Props) {
-  const { answer, sources, valid, trace_id } = response;
+  const { answer, sources, valid, confidence, trace_id } = response;
+  const isInfo = confidence === "info";
+
   const sections = parseSections(answer);
-  const confidence = extractConfidence(sections);
+  const confidenceLevel = extractConfidence(sections);
 
   const displaySections = sections.filter(
     (s) => s.title !== "Confiance" && s.title !== "Avertissement",
@@ -64,7 +66,7 @@ export default function AnswerCard({ response }: Props) {
         <span className="text-xs font-semibold uppercase tracking-wide text-muted">
           Dalil Route
         </span>
-        <ConfidenceBadge level={confidence} />
+        {!isInfo && <ConfidenceBadge level={confidenceLevel} />}
       </div>
 
       <div className="px-5 py-5 space-y-4">
@@ -93,7 +95,7 @@ export default function AnswerCard({ response }: Props) {
           </p>
         )}
 
-        <SourcePanel sources={sources} />
+        {!isInfo && <SourcePanel sources={sources} />}
         <FeedbackButtons traceId={trace_id} />
       </div>
     </div>

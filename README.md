@@ -2,8 +2,6 @@
 
 > Evidence-first RAG assistant for the Moroccan Code de la Route (Law 52-05). Every legal claim traces back to a retrieved article from the official Arabic corpus. No source = no answer.
 
-**Live demo:** TBD (deploying to Render + Vercel)
-
 ---
 
 ## Architecture
